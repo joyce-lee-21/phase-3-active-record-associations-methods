@@ -3,6 +3,7 @@ class Song < ActiveRecord::Base
   belongs_to :genre
 
   def get_genre_name
+    self.genre.name
   end
 
   def drake_made_this
@@ -10,5 +11,13 @@ class Song < ActiveRecord::Base
     # Drake doesn't exist in the database as an artist yet, so you'll have to create a record
     # Hint: you won't want to create an artist record every time this method is called, only if an Drake is *not found*
 
+    drake_exists = Artist.all.select{|artist| artist.name == "Drake"}
+    if drake_exists.empty?
+      drake = Artist.new(name: "Drake")
+      drake.songs << self
+      drake.save
+    else
+      drake_exists.first.songs << self
+    end
   end
 end
